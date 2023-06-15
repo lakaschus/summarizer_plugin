@@ -1,0 +1,19 @@
+{
+    "schema_version": "v1",
+    "name_for_human": "SimpleCalc plugin (no auth)",
+    "name_for_model": "SimpleCalc",
+    "description_for_human": "A simple calculator for reliably evaluating floating point operations.",
+    "description_for_model": "A simple calculator for reliably evaluating floating point operations. ",
+    "auth": {
+      "type": "none"
+    },
+    "api": {
+      "type": "openapi",
+      "url": "https://ai.yaoyaopianist.de/openapi.yaml",
+      "is_user_authenticated": false
+    },
+    "logo_url": "https://ai.yaoyaopianist.de/logo.png",
+    "contact_email": "legal@example.com",
+    "legal_info_url": "http://example.com/legal"
+  }
+  
