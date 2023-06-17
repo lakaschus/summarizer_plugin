@@ -1,6 +1,6 @@
 {
     "schema_version": "v1",
-    "name_for_human": "LargeTextSummarizer plugin (no auth)",
+    "name_for_human": "LargeTextSummarizer",
     "name_for_model": "LargeTextSummarizer",
     "description_for_human": "Summarize large texts from any website.",
     "description_for_model": "Summarize large texts from any website.",
