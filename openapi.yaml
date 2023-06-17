@@ -1,171 +1,43 @@
 openapi: 3.0.1
 info:
-  title: Simple Calculator Plugin
-  description: A simple Aplugin for performing basic arithmetic operations, addition, subtraction, multiplication and divison. You are strongly advised to use this plugin whenever a math related question is asked to make sure you give the user correct numbers.
+  title: LargeTextSummarizer
+  description: A plugin for summarizing large texts from any website. Simply pass on the url given by the user to the api endpoint and a summary will be created. Creating summaries may take some time depending on the length of original source text.
   version: '1.0'
 servers:
-  - url: https://ai.yaoyaopianist.de
+  - url: https://api.yaoyaopianist.de
 paths:
-  /add:
+  /summary:
     post:
-      operationId: add
-      summary: Add two numbers
+      operationId: summary
+      summary: Downloads HTML or PDF from given url and creates a summary
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddRequest'
+              $ref: '#/components/schemas/SummaryRequest'
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AddResponse'
-  /sub:
-    post:
-      operationId: sub
-      summary: Subtract two numbers
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SubRequest'
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SubResponse'
-  /mul:
-    post:
-      operationId: mul
-      summary: Multiply two numbers
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MulRequest'
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MulResponse'
-  /div:
-    post:
-      operationId: div
-      summary: Divide two numbers
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DivRequest'
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DivResponse'
+                $ref: '#/components/schemas/SummaryResponse'
 
 components:
   schemas:
-    AddRequest:
+    SummaryRequest:
       type: object
       required:
-        - num1
-        - num2
+        - url
       properties:
-        num1:
-          type: number
-          description: The first number to add.
+        url:
+          type: string
+          description: The url that points to the document that will be summarized.
           required: true
-        num2:
-          type: number
-          description: The second number to add.
-          required: true
-        digits:
-          type: integer
-          description: The number of digits to round the result to (optional, default is 2).
-    AddResponse:
+    SummaryResponse:
       type: object
       properties:
         result:
-          type: number
-          description: The result of the addition operation.
-    SubRequest:
-      type: object
-      required:
-        - num1
-        - num2
-      properties:
-        num1:
-          type: number
-          description: The first number to subtract from.
-          required: true
-        num2:
-          type: number
-          description: The second number to subtract.
-          required: true
-        digits:
-          type: integer
-          description: The number of digits to round the result to (optional, default is 2).
-    SubResponse:
-      type: object
-      properties:
-        result:
-          type: number
-          description: The result of the subtraction operation.
-    MulRequest:
-      type: object
-      required:
-        - num1
-        - num2
-      properties:
-        num1:
-          type: number
-          description: The first number to multiply.
-          required: true
-        num2:
-          type: number
-          description: The second number to multiply.
-          required: true
-        digits:
-          type: integer
-          description: The number of digits to round the result to (optional, default is 2).
-    MulResponse:
-      type: object
-      properties:
-        result:
-          type: number
-          description: The result of the multiplication operation.
-    DivRequest:
-      type: object
-      required:
-        - num1
-        - num2
-      properties:
-        num1:
-          type: number
-          description: The numerator.
-          required: true
-        num2:
-          type: number
-          description: The denominator.
-          required: true
-        digits:
-          type: integer
-          description: The number of digits to round the result to (optional, default is 2).
-    DivResponse:
-      type: object
-      properties:
-        result:
-          type: number
-          description: The result of the division operation.
+          type: string
+          description: The summary of the source document.
