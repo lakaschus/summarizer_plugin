@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 enc = tiktoken.get_encoding("cl100k_base")
+openai.api_key = os.getenv('OPEN_AI_KEY')
 
 
 def token_size(text):
@@ -121,7 +122,6 @@ def main(path):
 
 if __name__ == "__main__":
     # load openai key from environment
-    openai.api_key = os.getenv('OPEN_AI_KEY')
     # path = "datasets/shakespeare/romeo_and_juliet.txt"
     # path = "datasets/EU_AI_legislation.txt"
     path = "datasets/einkommensteuergesetz.html"

@@ -2,6 +2,7 @@ import quart
 import quart_cors
 from quart import request
 from web_scraping import get_content
+import summarizer
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 
@@ -18,12 +19,14 @@ async def add():
     url = data["url"]
     print("URL: ", url)
     content = get_content(url)
-    return {"result": content}
+    sum = summarizer.GPTSummarizer(content)
+    summary = sum.summarize_large_text()
+    return {"result": summary}
 
 
 @app.get("/logo.png")
 async def plugin_logo():
-    filename = 'logo.png'
+    filename = 'res/logo.png'
     return await quart.send_file(filename, mimetype='image/png')
 
 
@@ -42,7 +45,7 @@ async def openapi_spec():
 
 
 def main():
-    app.run(debug=True, host="0.0.0.0", port=5007)
+    app.run(debug=True, host="0.0.0.0", port=5003)
 
 
 if __name__ == "__main__":
