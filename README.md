@@ -6,7 +6,7 @@ Credit goes to https://github.com/daveshap/EU_AI_Act for the idea of summarizing
 
 This Repo can be used as a plugin to ChatGPT. 
 1. `pip install -r requirements.txt` or
-`conda env create -f environment.yml` and `conda activate summarizer_plugin` if you use conda 
+`conda env create -f conda.yaml` and `conda activate summarizer_plugin` if you use conda 
 2. Adapt the url in the `.well-known/ai-plugin.json` to your endpoint. 
 3. Also specify your OpenAI API key in your environment. For instance, you can create a `.env` file with the following content: `OPEN_AI_KEY=<Your Key>`
 
