@@ -9,6 +9,9 @@ import summarizer
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 
+@app.route("/")
+def home():
+    return 'API works!'
 
 results = {}
 
