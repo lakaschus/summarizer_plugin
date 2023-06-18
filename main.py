@@ -6,6 +6,7 @@ from quart import Quart, jsonify, Response
 from quart import request
 from web_scraping import get_content
 import summarizer
+import os
 
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 
@@ -13,14 +14,14 @@ app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.c
 def home():
     return 'API works!'
 
-results = {}
-
 def long_running_task(url, task_id):
     print("URL: ", url)
     content = get_content(url)
     sum = summarizer.GPTSummarizer(content)
     summary = sum.summarize_large_text()
-    results[task_id] = summary
+    # Save summary in out/{task_id}.txt
+    with open(f"out/{task_id}.txt", "w") as f:
+        f.write(summary)
 
 @app.route("/summary", methods=["POST"])
 async def add():
@@ -32,10 +33,12 @@ async def add():
 
 @app.route("/summary/<task_id>", methods=["GET"])
 async def get_result(task_id):
-    if task_id in results:
-        summary = results[task_id]
-        del results[task_id]
-        return jsonify({"summary": summary})
+    # Check if out/{task_id}.txt exists and return the summary
+    # Else: return "Processing..."
+    if os.path.exists(f"out/{task_id}.txt"):
+        with open(f"out/{task_id}.txt", "r") as f:
+            summary = f.read()
+            return {"result": summary}
     else:
         return jsonify({"status": "Processing..."}), 202
 
