@@ -88,8 +88,8 @@ class GPTSummarizer:
 
     def summarize_chunk(self, chunk, max_chunk_size):
         summary = self.generate_summary(chunk, mode='word_count_reduce')
-        # if token_size(summary) > max_chunk_size:
-        #     summary = self.generate_summary(summary, mode='word_count_reduce')
+        if token_size(summary) > max_chunk_size:
+            summary = self.generate_summary(summary, mode='word_count_reduce')
         if token_size(summary) > max_chunk_size:
             summary = self.generate_summary(summary, mode='brief')
         if token_size(summary) > max_chunk_size:
