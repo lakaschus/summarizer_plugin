@@ -1,8 +1,5 @@
 import quart
 import quart_cors
-import threading
-import time
-from quart import Quart, jsonify, Response
 from quart import request
 from web_scraping import get_content
 import summarizer
@@ -10,31 +7,21 @@ import summarizer
 app = quart_cors.cors(quart.Quart(__name__), allow_origin="https://chat.openai.com")
 
 
-results = {}
+@app.route("/")
+def home():
+    return 'API works!'
 
-def long_running_task(url, task_id):
-    print("URL: ", url)
-    content = get_content(url)
-    sum = summarizer.GPTSummarizer(content)
-    summary = sum.summarize_large_text()
-    results[task_id] = summary
 
+# Endpoint for adding two numbers
 @app.route("/summary", methods=["POST"])
 async def add():
     data = await request.get_json()
     url = data["url"]
-    task_id = str(time.time())  # Generate a unique task ID
-    threading.Thread(target=long_running_task, args=(url, task_id)).start()
-    return jsonify({"task_id": task_id}), 202
-
-@app.route("/summary/<task_id>", methods=["GET"])
-async def get_result(task_id):
-    if task_id in results:
-        summary = results[task_id]
-        del results[task_id]
-        return jsonify({"summary": summary})
-    else:
-        return jsonify({"status": "Processing..."}), 202
+    print("URL: ", url)
+    content = get_content(url)
+    sum = summarizer.GPTSummarizer(content)
+    summary = sum.summarize_large_text()
+    return {"result": summary}
 
 
 @app.get("/logo.png")

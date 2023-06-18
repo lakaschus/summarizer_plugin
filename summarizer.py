@@ -18,7 +18,7 @@ class GPTSummarizer:
     def __init__(self, large_text, max_len=12000, relative_chunk_size=0.1):
         self.relative_chunk_size = relative_chunk_size
         self.large_text_token_size = token_size(large_text)
-        self.chunk_size = min(int(self.large_text_token_size * self.relative_chunk_size), max_len)
+        self.chunk_size = max(min(int(self.large_text_token_size * self.relative_chunk_size), max_len), 1000)
         self.large_text = large_text
         self.max_len = max_len
         self.chunk_size_margin = int(0.1*self.chunk_size)
