@@ -21,6 +21,7 @@ async def add():
     content = get_content(url)
     sum = summarizer.GPTSummarizer(content)
     summary = sum.summarize_large_text()
+    print("Summary: ", summary)
     return {"result": summary}
 
 
