@@ -1,43 +1,87 @@
-openapi: 3.0.1
+openapi: "3.0.0"
 info:
-  title: LargeTextSummarizer
-  description: A plugin for summarizing large texts from any website. Simply pass on the url given by the user to the api endpoint and a summary will be created. Creating summaries may take some time depending on the length of original source text.
-  version: '1.0'
-servers:
-  - url: https://api.yaoyaopianist.de
+  version: "1.0.0"
+  title: "Summary API"
 paths:
   /summary:
     post:
-      operationId: summary
-      summary: Downloads HTML or PDF from given url and creates a summary
+      summary: "Start a new summarization task"
+      operationId: "add"
       requestBody:
+        description: "URL to summarize"
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SummaryRequest'
+              type: "object"
+              properties:
+                url:
+                  type: "string"
       responses:
-        "200":
-          description: OK
+        "202":
+          description: "Accepted. The task has been accepted for processing, but the processing has not been completed."
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SummaryResponse'
+                type: "object"
+                properties:
+                  task_id:
+                    type: "string"
+  /summary/{task_id}:
+    get:
+      summary: "Get the result of a summarization task"
+      operationId: "get_result"
+      parameters:
+      - name: "task_id"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  summary:
+                    type: "string"
+        "202":
+          description: "Accepted but not ready"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+  /logo.png:
+    get:
+      summary: "Get the plugin logo"
+      operationId: "plugin_logo"
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            image/png: {}
 
-components:
-  schemas:
-    SummaryRequest:
-      type: object
-      required:
-        - url
-      properties:
-        url:
-          type: string
-          description: The url that points to the document that will be summarized.
-          required: true
-    SummaryResponse:
-      type: object
-      properties:
-        result:
-          type: string
-          description: The summary of the source document.
+  /.well-known/ai-plugin.json:
+    get:
+      summary: "Get the plugin manifest"
+      operationId: "plugin_manifest"
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            text/json: {}
+
+  /openapi.yaml:
+    get:
+      summary: "Get the OpenAPI specification"
+      operationId: "openapi_spec"
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            text/yaml: {}

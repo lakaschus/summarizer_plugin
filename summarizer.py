@@ -2,6 +2,7 @@ import openai
 import tiktoken
 import os
 import time
+import multiprocessing
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -32,6 +33,7 @@ class GPTSummarizer:
         }
         self.chunk_summary_prompt = ""
         self.meta_summary_prompt = ""
+        self.start_time = time.time()
         print("GPTSummarizer initialized.")
         print(f"Large text token size: {self.large_text_token_size}")
         print(f"Chunk size: {self.chunk_size}")
@@ -84,26 +86,29 @@ class GPTSummarizer:
         response = self.chat_completion(self.system_message['extensive'], prompt)
         return response
 
+    def summarize_chunk(self, chunk, max_chunk_size):
+        summary = self.generate_summary(chunk, mode='word_count_reduce')
+        # if token_size(summary) > max_chunk_size:
+        #     summary = self.generate_summary(summary, mode='word_count_reduce')
+        if token_size(summary) > max_chunk_size:
+            summary = self.generate_summary(summary, mode='brief')
+        if token_size(summary) > max_chunk_size:
+            print("Summary is still too long. Truncating summary to max chunk size.")
+            summary = summary[:max_chunk_size*3]
+        return summary
+
     def summarize_large_text(self):
         # Split the text into chunks
         chunks = self.split_into_chunks(self.large_text)
+        print(f"Split text into {len(chunks)} chunks.")
         self.max_chunk_size = int(self.max_len / len(chunks))
 
-        summarized_chunks = []
-        for i, chunk in enumerate(chunks):
-            print(f"Summarizing chunk {i}")
-            summary = self.generate_summary(chunk, mode='word_count_reduce')
-            if token_size(summary) > self.max_chunk_size:
-                summary = self.generate_summary(summary, mode='word_count_reduce')
-            if token_size(summary) > self.max_chunk_size:
-                summary = self.generate_summary(summary, mode='brief')
-            if token_size(summary) > self.max_chunk_size:
-                print("Summary is still too long. Truncating summary to max chunk size.")
-                summary = summary[:self.max_chunk_size_chars]
-            summarized_chunks.append(summary)
+        pool = multiprocessing.Pool()
+        summarized_chunks = pool.starmap(self.summarize_chunk, [(chunk, self.max_chunk_size) for chunk in chunks])
 
         print("Generating final summary of summaries")
         final_summary = self.generate_summary_of_summaries(summarized_chunks)
+        print(f"Summary took {time.time() - self.start_time} seconds to generate.")
         return final_summary
 
 
@@ -121,9 +126,5 @@ def main(path):
 
 
 if __name__ == "__main__":
-    # load openai key from environment
-    # path = "datasets/shakespeare/romeo_and_juliet.txt"
-    # path = "datasets/EU_AI_legislation.txt"
-    path = "datasets/einkommensteuergesetz.html"
-    # path = "datasets/faust.txt"
+    path = "datasets/faust.txt"
     main(path)
